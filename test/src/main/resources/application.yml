@@ -1,0 +1,32 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-secret: 7be16c4ce51b71f3ad69cc381ad96cde0d405eb2
+            client-id: 4bbfa7cb257e7748e733
+    main:
+      allow-bean-definition-overriding: true
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: admin
+    driverClassName: org.postgresql.Driver
+
+  integration:
+    management:
+      default-logging-enabled: true
+
+
+server:
+  port: 8080
+
+
+
