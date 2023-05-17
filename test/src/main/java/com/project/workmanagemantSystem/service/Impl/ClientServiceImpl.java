@@ -1,6 +1,7 @@
 package com.project.workmanagemantSystem.service.Impl;
 
 import com.project.workmanagemantSystem.domain.Client;
+import com.project.workmanagemantSystem.domain.Response;
 import com.project.workmanagemantSystem.domain.User;
 import com.project.workmanagemantSystem.domain.enumeration.Status;
 import com.project.workmanagemantSystem.repository.ClientRepository;
@@ -8,6 +9,7 @@ import com.project.workmanagemantSystem.repository.UserRepository;
 import com.project.workmanagemantSystem.service.ClientService;
 import com.project.workmanagemantSystem.utils.RandomCodeGenerator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +25,7 @@ public class ClientServiceImpl implements ClientService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public String CreateNewClient(Client client) {
+    public Response CreateNewClient(Client client) {
         String code = RandomCodeGenerator.generateRandomCode();
         Client newClient = new Client();
         newClient.setOTP(passwordEncoder.encode(code));
@@ -44,7 +46,7 @@ public class ClientServiceImpl implements ClientService {
                 .build();
         userRepository.save(user);
 
-        return "Client created";
+        return Response.builder().message("client successfully created").status(HttpStatus.CREATED).build();
     }
 
 

@@ -8,5 +8,7 @@ public interface ChannelService {
 
  Response removeChannelFromWorkSpace(UUID workspaceCode, UUID channelCode);
 
- Response addExistingMembersToChannels(UUID userId,UUID channelId);
+ Response addExistingMembersToChannels(UUID usercode,UUID channelcode);
+
+ Response createBoardForChannel(UUID channelCode);
 }

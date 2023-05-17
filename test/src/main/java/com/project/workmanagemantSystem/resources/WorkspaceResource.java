@@ -5,6 +5,7 @@ import com.project.workmanagemantSystem.domain.Response;
 import com.project.workmanagemantSystem.domain.WorkSpace;
 import com.project.workmanagemantSystem.service.WorkspaceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,8 +38,8 @@ public class WorkspaceResource {
     }
 
     @GetMapping("/get/workspace/{workSpaceCode}")
-    WorkSpace getWorkspaceByID(@PathVariable UUID workSpaceCode){
-        return workspaceService.getWorkspace(workSpaceCode);
+    ResponseEntity<WorkSpace> getWorkspaceByID(@PathVariable UUID workSpaceCode){
+        return ResponseEntity.ok(workspaceService.getWorkspace(workSpaceCode));
     }
 
 }

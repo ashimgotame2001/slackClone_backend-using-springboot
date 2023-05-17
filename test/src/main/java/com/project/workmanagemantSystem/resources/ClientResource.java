@@ -2,6 +2,7 @@ package com.project.workmanagemantSystem.resources;
 
 
 import com.project.workmanagemantSystem.domain.Client;
+import com.project.workmanagemantSystem.domain.Response;
 import com.project.workmanagemantSystem.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +15,7 @@ public class ClientResource {
     private final ClientService clientService;
 
     @PostMapping("/add_client")
-    String registerClient(@RequestBody Client client){
+    Response registerClient(@RequestBody Client client){
         return clientService.CreateNewClient(client);
     };
 

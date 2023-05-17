@@ -18,8 +18,9 @@ public class Channels {
     @Id
     private UUID id;
     private String name;
+    private String channelType;
     @ManyToMany
-    private List<User> members;
+    private List<Members> members;
     @ManyToMany
     private List<Messages> messages;
 

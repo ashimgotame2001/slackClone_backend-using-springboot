@@ -23,7 +23,7 @@ public class WorkSpace {
     @OneToMany
     private List<Channels> Channels;
     @OneToMany
-    private List<User> members;
+    private List<Members> members;
     private String name;
     @ManyToOne
     private Client clientCode;

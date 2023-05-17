@@ -16,4 +16,6 @@ public interface WorkspaceService {
     Response addChannelsToWorkSpace(UUID workSpaceCode, String name);
 
     WorkSpace getWorkspace(UUID workSpaceCode);
+
+    Response addMemberToWorkSpace(String email,UUID workspaceCode);
 }

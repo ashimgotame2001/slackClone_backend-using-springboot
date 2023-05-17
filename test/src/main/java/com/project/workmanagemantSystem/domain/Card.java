@@ -16,7 +16,9 @@ import java.util.*;
 public class Card {
     @Id
     private UUID id;
-    private Integer laneNumber;
+    private String status;
+    @ManyToOne
+    private BoardSection section;
     private String notes;
     @OneToMany
     private Set<User> assignee = new HashSet<>();
