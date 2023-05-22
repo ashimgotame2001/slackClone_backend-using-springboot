@@ -5,6 +5,7 @@ import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -17,10 +18,9 @@ import java.util.UUID;
 public class Messages {
     @Id
     private UUID id;
-    private String messages;
-    @OneToOne
-    private User senderId;
+    private String message;
+    private UUID senderId;
     private UUID ReceiverId;
     private Boolean IsBookmarked;
-
+    private LocalDateTime sendOn;
 }

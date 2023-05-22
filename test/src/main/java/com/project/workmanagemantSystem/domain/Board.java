@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -22,4 +24,6 @@ public class Board {
     private User createdBy;
     @OneToOne
     private Channels channel;
+    @OneToMany
+    private List<BoardSection> sections = new ArrayList<>();
 }
