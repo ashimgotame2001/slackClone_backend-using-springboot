@@ -3,6 +3,7 @@ package com.project.workmanagemantSystem.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,10 +19,11 @@ public class Board {
     @Id
     private UUID id;
     private String name;
-    private String Status;
-    private Integer numberOfLane;
+    private LocalDateTime createdAt;
+    @OneToOne
+    private User createdBy;
     @OneToOne
     private Channels channel;
     @OneToMany
-    private List<Card> cards = new ArrayList<>();
+    private List<BoardSection> sections = new ArrayList<>();
 }

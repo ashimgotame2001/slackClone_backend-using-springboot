@@ -15,7 +15,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
-@JsonIgnoreProperties(value = "clientCode")
+@JsonIgnoreProperties(value = {"clientCode","members"})
 
 public class WorkSpace {
     @Id
@@ -23,7 +23,7 @@ public class WorkSpace {
     @OneToMany
     private List<Channels> Channels;
     @OneToMany
-    private List<User> members;
+    private List<Members> members;
     private String name;
     @ManyToOne
     private Client clientCode;

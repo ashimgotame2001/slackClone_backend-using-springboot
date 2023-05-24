@@ -1,18 +1,22 @@
 package com.project.workmanagemantSystem.service.Impl;
 
 import com.project.workmanagemantSystem.domain.Client;
+import com.project.workmanagemantSystem.Responce.ApiResponse;
 import com.project.workmanagemantSystem.domain.User;
 import com.project.workmanagemantSystem.domain.enumeration.Status;
+import com.project.workmanagemantSystem.domain.enumeration.UserRole;
 import com.project.workmanagemantSystem.repository.ClientRepository;
 import com.project.workmanagemantSystem.repository.UserRepository;
 import com.project.workmanagemantSystem.service.ClientService;
 import com.project.workmanagemantSystem.utils.RandomCodeGenerator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -23,28 +27,34 @@ public class ClientServiceImpl implements ClientService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public String CreateNewClient(Client client) {
+    public ApiResponse CreateNewClient(Client client) {
         String code = RandomCodeGenerator.generateRandomCode();
+        System.out.println(code);
         Client newClient = new Client();
         newClient.setOTP(passwordEncoder.encode(code));
         newClient.setId(UUID.randomUUID());
         newClient.setEmail(client.getEmail());
         newClient.setPhone(client.getPhone());
         newClient.setOwner(client.getEmail());
-        newClient.setName(client.getName());
+        newClient.setFirstName(client.getFirstName());
+        newClient.setLastName(client.getLastName());
         newClient.setStatus(Status.PENDING.name());
         newClient.setStartedAt(LocalDateTime.now());
         clientRepository.save(newClient);
 
         User user = User.builder()
                 .id(UUID.randomUUID())
+                .firstName(client.getFirstName())
+                .lastName(client.getLastName())
                 .Phone(client.getPhone())
                 .email(client.getEmail())
                 .password(passwordEncoder.encode(RandomCodeGenerator.generateRandomCode()))
+                .isPasswordChanged(false)
+                .role(UserRole.USER)
                 .build();
         userRepository.save(user);
 
-        return "Client created";
+        return ApiResponse.builder().message("client successfully created").status(HttpStatus.CREATED).build();
     }
 
 
@@ -54,14 +64,27 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public void verifyClientOTP(String code) {
+    public ApiResponse verifyClientOTP(String code) {
          List<Client> client = clientRepository.findAll();
+         ApiResponse apiResponse = new ApiResponse();
          client.forEach(c->{
              if(passwordEncoder.matches(code,c.getOTP())){
-                 c.setStatus(Status.VERIFIED.name());
-                 clientRepository.save(c);
+                 if(!Objects.equals(c.getStatus(), Status.VERIFIED.name())) {
+                     c.setStatus(Status.VERIFIED.name());
+                     clientRepository.save(c);
+                     apiResponse.setMessage("OTP Verified");
+                     apiResponse.setStatus(HttpStatus.OK);
+                 }else if (c.getStatus().equals(Status.VERIFIED.name())){
+                    apiResponse.setMessage("OTP already verified");
+                    apiResponse.setStatus(HttpStatus.BAD_REQUEST);
+                 }
+             } else if (!passwordEncoder.matches(code,c.getOTP())) {
+                 apiResponse.setMessage("OTP not found");
+                 apiResponse.setStatus(HttpStatus.BAD_REQUEST);
              }
-         });
+                 }
+         );
+        return apiResponse;
     }
 }
 

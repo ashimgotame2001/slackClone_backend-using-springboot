@@ -20,8 +20,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "user",schema = "public")
-@JsonIgnoreProperties(value = { "password","role","authorities","status","accountNonLocked", "username","accountNonExpired","credentialsNonExpired","enabled"}, allowSetters = true)
+@Table(name = "user", schema = "public")
+@JsonIgnoreProperties(value = {"password", "role", "authorities", "isPasswordChanged", "status", "accountNonLocked", "username", "accountNonExpired", "credentialsNonExpired", "enabled"}, allowSetters = true)
 public class User implements UserDetails {
 
     @Id
@@ -29,10 +29,11 @@ public class User implements UserDetails {
     private String firstName;
     private String lastName;
     private String password;
-    private  String Phone;
+    private String Phone;
     private String email;
     private UserRole role;
     private String status;
+    private Boolean isPasswordChanged;
 
 
     @Override

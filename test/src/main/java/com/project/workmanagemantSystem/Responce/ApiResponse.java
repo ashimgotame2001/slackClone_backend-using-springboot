@@ -1,4 +1,4 @@
-package com.project.workmanagemantSystem.domain;
+package com.project.workmanagemantSystem.Responce;
 
 import lombok.*;
 import org.springframework.http.HttpStatus;
@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Response {
+public class ApiResponse {
 
     private HttpStatus status;
     private String message;
