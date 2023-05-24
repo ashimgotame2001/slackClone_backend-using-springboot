@@ -1,6 +1,6 @@
 package com.project.workmanagemantSystem.resources;
 
-import com.project.workmanagemantSystem.domain.Response;
+import com.project.workmanagemantSystem.Responce.ApiResponse;
 import com.project.workmanagemantSystem.service.ChannelService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ public class ChannelResource {
     private final ChannelService channelService;
 //    private final
     @PostMapping("/add-member/{channelCode/{memberCode}")
-    ResponseEntity<Response> addWorkSpaceMemberToChannel(
+    ResponseEntity<ApiResponse> addWorkSpaceMemberToChannel(
             @PathVariable UUID channelCode,
             @PathVariable UUID memberCode
     ){
@@ -26,11 +26,11 @@ public class ChannelResource {
     }
 
     @PostMapping("/create-board/{channelCode}")
-    ResponseEntity<Response> createBoardForChannel(@PathVariable UUID channelCode){
+    ResponseEntity<ApiResponse> createBoardForChannel(@PathVariable UUID channelCode){
         return ResponseEntity.ok(channelService.createBoardForChannel(channelCode));
     }
     @DeleteMapping("/remove/{channelCode}/{workSpaceCode}")
-    Response removeChannel(
+    ApiResponse removeChannel(
             @PathVariable UUID channelCode,
             @PathVariable UUID workSpaceCode
     ){

@@ -2,7 +2,7 @@ package com.project.workmanagemantSystem.service.Impl;
 
 import com.project.workmanagemantSystem.domain.Board;
 import com.project.workmanagemantSystem.domain.Channels;
-import com.project.workmanagemantSystem.domain.Response;
+import com.project.workmanagemantSystem.Responce.ApiResponse;
 import com.project.workmanagemantSystem.domain.User;
 import com.project.workmanagemantSystem.exceptions.BadAlertException;
 import com.project.workmanagemantSystem.repository.BoardRepository;
@@ -10,6 +10,7 @@ import com.project.workmanagemantSystem.repository.ChannelsRepository;
 import com.project.workmanagemantSystem.service.AuthenticationService;
 import com.project.workmanagemantSystem.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,7 +23,7 @@ public class BoardServiceImpl implements BoardService {
     private final ChannelsRepository channelsRepository;
     private final BoardRepository boardRepository;
     @Override
-    public Response createNewBoard(UUID channelCode) {
+    public ApiResponse createNewBoard(UUID channelCode, String name) {
         Channels channels = channelsRepository.findById(channelCode)
                 .orElseThrow(()-> new BadAlertException(
                         "Channel not found",
@@ -32,11 +33,12 @@ public class BoardServiceImpl implements BoardService {
         User user = service.getLoggedUserDetails();
         Board board = new Board();
         board.setId(UUID.randomUUID());
+        board.setName(name);
         board.setCreatedAt(LocalDateTime.now());
         board.setCreatedBy(user);
         board.setChannel(channels);
         boardRepository.save(board);
-        return null;
+        return ApiResponse.builder().message("Board created").status(HttpStatus.CREATED).build();
     }
 
     @Override

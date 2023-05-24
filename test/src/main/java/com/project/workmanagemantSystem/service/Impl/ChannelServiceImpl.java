@@ -1,11 +1,11 @@
 package com.project.workmanagemantSystem.service.Impl;
 
+import com.project.workmanagemantSystem.Responce.ApiResponse;
 import com.project.workmanagemantSystem.domain.*;
 import com.project.workmanagemantSystem.exceptions.BadAlertException;
 import com.project.workmanagemantSystem.repository.*;
 import com.project.workmanagemantSystem.service.AuthenticationService;
 import com.project.workmanagemantSystem.service.ChannelService;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,12 +24,12 @@ public class ChannelServiceImpl implements ChannelService {
     private final BoardRepository boardRepository;
 
     @Override
-    public Response removeChannelFromWorkSpace(UUID workspaceCode, UUID channelCode) {
+    public ApiResponse removeChannelFromWorkSpace(UUID workspaceCode, UUID channelCode) {
         return null;
     }
 
     @Override
-    public Response addExistingMembersToChannels(UUID userCode,UUID channelCode) {
+    public ApiResponse addExistingMembersToChannels(UUID userCode, UUID channelCode) {
         User user  = userRepository.findById(userCode).orElseThrow(()-> new BadAlertException(
                 "user not found",
                 "Users",
@@ -50,11 +50,11 @@ public class ChannelServiceImpl implements ChannelService {
         List<Members> userList = channels.getMembers();
         userList.add(members);
         channelsRepository.save(channels);
-        return Response.builder().message("Member added").status(HttpStatus.OK).build();
+        return ApiResponse.builder().message("Member added").status(HttpStatus.OK).build();
     }
 
     @Override
-    public Response createBoardForChannel(UUID channelCode) {
+    public ApiResponse createBoardForChannel(UUID channelCode) {
         User user = service.getLoggedUserDetails();
         Channels channels = channelsRepository.findById(channelCode).orElseThrow(()-> new BadAlertException(
                 "Channel ID not found",
@@ -67,6 +67,6 @@ public class ChannelServiceImpl implements ChannelService {
         board.setCreatedBy(user);
         board.setChannel(channels);
         boardRepository.save(board);
-        return Response.builder().message("Board Created successfully").status(HttpStatus.CREATED).build();
+        return ApiResponse.builder().message("Board Created successfully").status(HttpStatus.CREATED).build();
     }
 }

@@ -1,5 +1,6 @@
 package com.project.workmanagemantSystem.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
+@JsonIgnoreProperties(value = {"members","messages"})
 public class Channels {
     @Id
     private UUID id;

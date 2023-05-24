@@ -1,9 +1,10 @@
 package com.project.workmanagemantSystem.service.Impl;
 
 import com.project.workmanagemantSystem.config.JwtService;
-import com.project.workmanagemantSystem.domain.Response;
+import com.project.workmanagemantSystem.Responce.ApiResponse;
 import com.project.workmanagemantSystem.domain.User;
 import com.project.workmanagemantSystem.domain.enumeration.UserRole;
+import com.project.workmanagemantSystem.domain.request.PasswordRequest;
 import com.project.workmanagemantSystem.exceptions.BadAlertException;
 import com.project.workmanagemantSystem.repository.UserRepository;
 import com.project.workmanagemantSystem.security.AuthenticationRequest;
@@ -17,7 +18,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,24 +32,26 @@ public class AuthenicationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+
     @Override
-    public Response register(RegisterRequest request) {
+    public ApiResponse register(RegisterRequest request) {
 
         Optional<User> getUser = userRepository.findByEmail(request.getEmail());
-        if (getUser.isEmpty()) {
-                User user = User.builder()
-                        .id(UUID.randomUUID())
-                        .firstName(request.getFirstName())
-                        .lastName(request.getLastName())
-                        .email(request.getEmail())
-                        .password(passwordEncoder.encode(request.getPassword()))
-                        .Phone(request.getPhone())
-                        .status("PENDING")
-                        .role(UserRole.USER)
-                        .build();
-                userRepository.save(user);
-                return Response.builder().message("Please check email to verify").status(HttpStatus.CREATED).build();
-        }else {
+        if (!getUser.isPresent()) {
+            User user = User.builder()
+                    .id(UUID.randomUUID())
+                    .firstName(request.getFirstName())
+                    .lastName(request.getLastName())
+                    .email(request.getEmail())
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .Phone(request.getPhone())
+                    .status("PENDING")
+                    .role(UserRole.USER)
+                    .isPasswordChanged(false)
+                    .build();
+            userRepository.save(user);
+            return ApiResponse.builder().message("Please check email to verify").status(HttpStatus.CREATED).build();
+        } else {
             throw new BadAlertException(
                     "Email already exists",
                     "user",
@@ -59,14 +61,14 @@ public class AuthenicationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public AuthenticationResponce authenticate(AuthenticationRequest request){
+    public AuthenticationResponce authenticate(AuthenticationRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BadAlertException(
                         "user not found ",
                         "Bad credentials",
                         "INVALID_CREDENTIALS"
                 ));
-        if(passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             request.getEmail(),
@@ -79,7 +81,7 @@ public class AuthenicationServiceImpl implements AuthenticationService {
                     .message("LOGGED_IN")
                     .status(HttpStatus.ACCEPTED)
                     .build();
-        }else {
+        } else {
             throw new BadAlertException(
                     "Incorrect password",
                     "user",
@@ -89,17 +91,17 @@ public class AuthenicationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public Response getUserVerified(UUID userId) {
+    public ApiResponse getUserVerified(UUID userId) {
         User user = userRepository.getReferenceById(userId);
-        if(user != null) {
+        if (user != null) {
             user.setStatus("ACTIVE");
             userRepository.save(user);
-            return Response.builder()
+            return ApiResponse.builder()
                     .message("User Verified")
                     .status(HttpStatus.OK)
                     .build();
         }
-        return Response.builder().build();
+        return ApiResponse.builder().build();
     }
 
     @Override
@@ -109,5 +111,52 @@ public class AuthenicationServiceImpl implements AuthenticationService {
         String username = userDetails.getUsername();
         User user = userRepository.findByEmail(username).orElseThrow();
         return user;
+    }
+
+    @Override
+    public ApiResponse changePassword(PasswordRequest passwordRequest) {
+        User user = userRepository.findByEmail(passwordRequest.getEmail())
+                .orElseThrow(() -> new BadAlertException(
+                        "User not found",
+                        "User",
+                        "INVALID_USER_CODE"
+                ));
+        if (user.getIsPasswordChanged()) {
+            if (passwordRequest.getOldPassword() != null) {
+                if (passwordEncoder.matches(passwordRequest.getOldPassword(), user.getPassword())) {
+                    user.setPassword(passwordEncoder.encode(passwordRequest.getNewPassword()));
+                    userRepository.save(user);
+                    return ApiResponse.builder()
+                            .message("Password Changed Successfully")
+                            .status(HttpStatus.OK)
+                            .build();
+                } else {
+                    throw new BadAlertException(
+                            "Incorrect password",
+                            "USER",
+                            "INVALID_USER_PASSWORD"
+                    );
+                }
+            } else {
+                throw new BadAlertException(
+                        "Old password not found",
+                        "USER",
+                        "INVALID_USER_PASSWORD"
+                );
+            }
+        } else if (!user.getIsPasswordChanged()) {
+            user.setPassword(passwordEncoder.encode(passwordRequest.getNewPassword()));
+            user.setIsPasswordChanged(true);
+            userRepository.save(user);
+            return ApiResponse.builder()
+                    .message("Password Changed Successfully")
+                    .status(HttpStatus.OK)
+                    .build();
+        }
+        throw new BadAlertException(
+                "Bad credentials",
+                "User",
+                "INVALID_USER_CREDENTIALS"
+        );
     }
 }

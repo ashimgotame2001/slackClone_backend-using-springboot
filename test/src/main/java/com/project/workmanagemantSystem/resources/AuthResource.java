@@ -1,8 +1,8 @@
 package com.project.workmanagemantSystem.resources;
 
 
-import com.project.workmanagemantSystem.domain.Response;
-import com.project.workmanagemantSystem.exceptions.BadAlertException;
+import com.project.workmanagemantSystem.Responce.ApiResponse;
+import com.project.workmanagemantSystem.domain.request.PasswordRequest;
 import com.project.workmanagemantSystem.security.AuthenticationRequest;
 import com.project.workmanagemantSystem.security.AuthenticationResponce;
 import com.project.workmanagemantSystem.security.RegisterRequest;
@@ -20,7 +20,7 @@ public class AuthResource {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public Response register(@RequestBody RegisterRequest request)  {
+    public ApiResponse register(@RequestBody RegisterRequest request)  {
         return   authenticationService.register(request);
     }
     @PostMapping("/authenticate")
@@ -29,7 +29,12 @@ public class AuthResource {
     }
 
     @GetMapping("/verify/{userCode}")
-    public ResponseEntity<Response> verifyUser(@PathVariable UUID userCode){
+    public ResponseEntity<ApiResponse> verifyUser(@PathVariable UUID userCode){
         return ResponseEntity.ok(authenticationService.getUserVerified(userCode));
+    }
+
+    @PostMapping("/user/changePassword")
+    public ResponseEntity<ApiResponse> changePassword(@RequestBody PasswordRequest passwordRequest){
+        return ResponseEntity.ok(authenticationService.changePassword(passwordRequest));
     }
 }

@@ -1,5 +1,6 @@
 package com.project.workmanagemantSystem.service.Impl;
 
+import com.project.workmanagemantSystem.Responce.ApiResponse;
 import com.project.workmanagemantSystem.domain.*;
 import com.project.workmanagemantSystem.domain.enumeration.Status;
 import com.project.workmanagemantSystem.exceptions.BadAlertException;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -29,7 +29,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     private final UserRepository userRepository;
 
     @Override
-    public Response createNewWorkSpace(String name, UUID clientCode) {
+    public ApiResponse createNewWorkSpace(String name, UUID clientCode) {
         Client client = clientRepository.findById(clientCode).orElseThrow();
         User user = service.getLoggedUserDetails();
         Members members = new Members();
@@ -67,7 +67,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 .clientCode(client)
                 .build();
         workspaceRepository.save(workSpace);
-        return Response.builder().message("Registered").status(HttpStatus.CREATED).build();
+        return ApiResponse.builder().message("Registered").status(HttpStatus.CREATED).build();
     }
 
     @Override
@@ -78,7 +78,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     }
 
     @Override
-    public Response addChannelsToWorkSpace(UUID workSpaceCode, String name) {
+    public ApiResponse addChannelsToWorkSpace(UUID workSpaceCode, String name) {
         User user = service.getLoggedUserDetails();
 
         Members members = new Members();
@@ -94,6 +94,8 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 .id(UUID.randomUUID())
                 .name(name)
                 .members(userList)
+                .channelType("PRIVATE")
+                .status(Status.ACTIVE.name())
                 .build();
         channelsRepository.save(channels);
         WorkSpace workSpace = workspaceRepository.findById(workSpaceCode).orElseThrow();
@@ -101,7 +103,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         channelsList.add(channels);
         workSpace.setChannels(channelsList);
         workspaceRepository.save(workSpace);
-        return Response.builder().message("Channel added").status(HttpStatus.CREATED).build();
+        return ApiResponse.builder().message("Channel added").status(HttpStatus.CREATED).build();
     }
 
     @Override
@@ -115,7 +117,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     }
 
     @Override
-    public Response addMemberToWorkSpace(String email,UUID workspaceCode) {
+    public ApiResponse addMemberToWorkSpace(String email, UUID workspaceCode) {
         WorkSpace workSpace = workspaceRepository.findById(workspaceCode)
                 .orElseThrow(()-> new BadAlertException(
                         "workspace not found ",
@@ -135,7 +137,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
         List<Members> membersList = workSpace.getMembers();
         membersList.add(members);
         workspaceRepository.save(workSpace);
-        return Response.builder()
+        return ApiResponse.builder()
                 .message("Member Added")
                 .status(HttpStatus.OK)
                 .build();

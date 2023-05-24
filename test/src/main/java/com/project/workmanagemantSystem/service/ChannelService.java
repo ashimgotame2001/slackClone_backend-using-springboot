@@ -1,14 +1,14 @@
 package com.project.workmanagemantSystem.service;
 
-import com.project.workmanagemantSystem.domain.Response;
+import com.project.workmanagemantSystem.Responce.ApiResponse;
 
 import java.util.UUID;
 
 public interface ChannelService {
 
- Response removeChannelFromWorkSpace(UUID workspaceCode, UUID channelCode);
+ ApiResponse removeChannelFromWorkSpace(UUID workspaceCode, UUID channelCode);
 
- Response addExistingMembersToChannels(UUID usercode,UUID channelcode);
+ ApiResponse addExistingMembersToChannels(UUID usercode, UUID channelcode);
 
- Response createBoardForChannel(UUID channelCode);
+ ApiResponse createBoardForChannel(UUID channelCode);
 }

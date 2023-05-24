@@ -1,7 +1,7 @@
 package com.project.workmanagemantSystem.resources;
 
 import com.project.workmanagemantSystem.domain.Channels;
-import com.project.workmanagemantSystem.domain.Response;
+import com.project.workmanagemantSystem.Responce.ApiResponse;
 import com.project.workmanagemantSystem.domain.WorkSpace;
 import com.project.workmanagemantSystem.service.WorkspaceService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class WorkspaceResource {
     }
 
     @PostMapping("add/{workSpaceCode}/{name}")
-    Response addChannelToWorkSpace(
+    ApiResponse addChannelToWorkSpace(
             @PathVariable UUID workSpaceCode,
             @PathVariable String name){
         return workspaceService.addChannelsToWorkSpace(workSpaceCode,name);
