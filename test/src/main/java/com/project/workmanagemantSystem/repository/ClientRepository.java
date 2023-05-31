@@ -13,4 +13,6 @@ public interface ClientRepository extends JpaRepository<Client, UUID> {
    Optional<Client> findById(UUID id);
    Optional<Client> findByOTP(String otpCode);
 
+   Optional<Client> findByEmail(String email);
+
 }

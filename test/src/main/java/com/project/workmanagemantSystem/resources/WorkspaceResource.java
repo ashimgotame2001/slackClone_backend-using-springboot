@@ -3,6 +3,7 @@ package com.project.workmanagemantSystem.resources;
 import com.project.workmanagemantSystem.domain.Channels;
 import com.project.workmanagemantSystem.Responce.ApiResponse;
 import com.project.workmanagemantSystem.domain.WorkSpace;
+import com.project.workmanagemantSystem.domain.request.WorkSpaceMemberRequest;
 import com.project.workmanagemantSystem.service.WorkspaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +19,16 @@ public class WorkspaceResource {
     private final WorkspaceService workspaceService;
 
     @PostMapping("/register/{name}/{clientCode}")
-   void registerWorkSpace(
+   ApiResponse registerWorkSpace(
             @PathVariable String name,
             @PathVariable UUID clientCode
             ){
-        workspaceService.createNewWorkSpace(name,clientCode);
+       return workspaceService.createNewWorkSpace(name,clientCode);
+    }
+
+    @GetMapping
+    List<WorkSpace> getAllWorkspaceByLoggedUser(){
+        return workspaceService.getWorkSpaceOfLoggedUser();
     }
 
     @GetMapping("/channels/{workSpaceCode}")
@@ -30,7 +36,7 @@ public class WorkspaceResource {
         return workspaceService.getChannelsByWorkspace(workSpaceCode);
     }
 
-    @PostMapping("add/{workSpaceCode}/{name}")
+    @PostMapping("add/{name}/{workSpaceCode}")
     ApiResponse addChannelToWorkSpace(
             @PathVariable UUID workSpaceCode,
             @PathVariable String name){
@@ -41,5 +47,11 @@ public class WorkspaceResource {
     ResponseEntity<WorkSpace> getWorkspaceByID(@PathVariable UUID workSpaceCode){
         return ResponseEntity.ok(workspaceService.getWorkspace(workSpaceCode));
     }
+
+    @PostMapping("/add/member")
+    ApiResponse addMemberInWorkSpace(@RequestBody WorkSpaceMemberRequest workSpaceMemberRequest){
+      return workspaceService.addMemberToWorkSpace(workSpaceMemberRequest.getEmail(), workSpaceMemberRequest.getWorkspaceCode());
+    }
+
 
 }

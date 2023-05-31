@@ -15,7 +15,7 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
-@JsonIgnoreProperties(value = {"clientCode","members"})
+@JsonIgnoreProperties(value = {"clientCode","channels"})
 
 public class WorkSpace {
     @Id

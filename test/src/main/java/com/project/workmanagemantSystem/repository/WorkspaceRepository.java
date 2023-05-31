@@ -15,5 +15,9 @@ public interface WorkspaceRepository extends JpaRepository<WorkSpace, UUID> {
 
     Optional<WorkSpace> findById(UUID uuid);
 
+//    List<WorkSpace> findByClientCode(UUID clientCode);
+
+    List<WorkSpace>  findByClientCode_Id(UUID clientCode);
+
 //    List<Channels> getListOfChannelsBasedOnWorkSpaceCode(@Param("code")UUID code);
 }

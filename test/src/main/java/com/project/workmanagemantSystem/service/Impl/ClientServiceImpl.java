@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -51,6 +52,7 @@ public class ClientServiceImpl implements ClientService {
                 .password(passwordEncoder.encode(RandomCodeGenerator.generateRandomCode()))
                 .isPasswordChanged(false)
                 .role(UserRole.USER)
+                .status(Status.PENDING.name())
                 .build();
         userRepository.save(user);
 
@@ -71,9 +73,15 @@ public class ClientServiceImpl implements ClientService {
              if(passwordEncoder.matches(code,c.getOTP())){
                  if(!Objects.equals(c.getStatus(), Status.VERIFIED.name())) {
                      c.setStatus(Status.VERIFIED.name());
+                     User user = userRepository.findByEmail(c.getEmail()).get();
+                     user.setStatus(Status.VERIFIED.name());
+                     userRepository.save(user);
                      clientRepository.save(c);
                      apiResponse.setMessage("OTP Verified");
                      apiResponse.setStatus(HttpStatus.OK);
+
+                     ///// Send change password email to user
+
                  }else if (c.getStatus().equals(Status.VERIFIED.name())){
                     apiResponse.setMessage("OTP already verified");
                     apiResponse.setStatus(HttpStatus.BAD_REQUEST);
