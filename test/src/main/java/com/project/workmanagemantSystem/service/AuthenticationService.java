@@ -3,6 +3,7 @@ package com.project.workmanagemantSystem.service;
 import com.project.workmanagemantSystem.Responce.ApiResponse;
 import com.project.workmanagemantSystem.domain.User;
 import com.project.workmanagemantSystem.domain.request.PasswordRequest;
+import com.project.workmanagemantSystem.domain.request.UserRequest;
 import com.project.workmanagemantSystem.security.AuthenticationRequest;
 import com.project.workmanagemantSystem.security.AuthenticationResponce;
 import com.project.workmanagemantSystem.security.RegisterRequest;
@@ -19,5 +20,7 @@ public interface AuthenticationService {
     User getLoggedUserDetails();
 
     ApiResponse changePassword(PasswordRequest passwordRequest);
+
+    ApiResponse updateUserDetails(UserRequest userRequest,UUID userCode);
 
 }

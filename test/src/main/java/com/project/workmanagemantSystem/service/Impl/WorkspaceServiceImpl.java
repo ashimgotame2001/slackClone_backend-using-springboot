@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -124,22 +125,42 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                         "WorkSpace",
                         "INVALID_WORKSPACE_CODE"
                 ));
-        User user = new User();
-        user.setId(UUID.randomUUID());
-        user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(RandomCodeGenerator.generateRandomCode()));
-        user.setStatus(Status.PENDING.name());
-        userRepository.save(user);
-        Members members = new Members();
-        members.setId(UUID.randomUUID());
-        members.setEmail(email);
-        memberRepository.save(members);
-        List<Members> membersList = workSpace.getMembers();
-        membersList.add(members);
-        workspaceRepository.save(workSpace);
-        return ApiResponse.builder()
-                .message("Member Added")
-                .status(HttpStatus.OK)
-                .build();
+        Optional<User> u = userRepository.findByEmail(email);
+        if(u.isEmpty()) {
+            User user = new User();
+            user.setId(UUID.randomUUID());
+            user.setEmail(email);
+            user.setPassword(passwordEncoder.encode(RandomCodeGenerator.generateRandomCode()));
+            user.setStatus(Status.PENDING.name());
+            userRepository.save(user);
+
+//            send email to user
+
+            Members members = new Members();
+            members.setId(UUID.randomUUID());
+            members.setEmail(email);
+            memberRepository.save(members);
+            List<Members> membersList = workSpace.getMembers();
+            membersList.add(members);
+            workspaceRepository.save(workSpace);
+            return ApiResponse.builder()
+                    .message("Member Added")
+                    .status(HttpStatus.OK)
+                    .build();
+        }else {
+            throw new BadAlertException(
+                    "Email already exists",
+                    "User",
+                    "INVALID_EMAIL"
+            );
+        }
+    }
+
+    @Override
+    public List<WorkSpace> getWorkSpaceOfLoggedUser() {
+        User user = service.getLoggedUserDetails();
+        Client client = clientRepository.findByEmail(user.getEmail()).get();
+        List< WorkSpace> workSpace = workspaceRepository.findByClientCode_Id(client.getId());
+        return workSpace;
     }
 }

@@ -3,6 +3,7 @@ package com.project.workmanagemantSystem.resources;
 
 import com.project.workmanagemantSystem.Responce.ApiResponse;
 import com.project.workmanagemantSystem.domain.request.PasswordRequest;
+import com.project.workmanagemantSystem.domain.request.UserRequest;
 import com.project.workmanagemantSystem.security.AuthenticationRequest;
 import com.project.workmanagemantSystem.security.AuthenticationResponce;
 import com.project.workmanagemantSystem.security.RegisterRequest;
@@ -24,7 +25,7 @@ public class AuthResource {
         return   authenticationService.register(request);
     }
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponce> register(@RequestBody AuthenticationRequest request){
+    public ResponseEntity<AuthenticationResponce> authenticate(@RequestBody AuthenticationRequest request){
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 
@@ -33,8 +34,17 @@ public class AuthResource {
         return ResponseEntity.ok(authenticationService.getUserVerified(userCode));
     }
 
-    @PostMapping("/user/changePassword")
-    public ResponseEntity<ApiResponse> changePassword(@RequestBody PasswordRequest passwordRequest){
+    @PostMapping("/user/changePassword/{userCode}")
+    public ResponseEntity<ApiResponse> changePassword(@RequestBody PasswordRequest passwordRequest ,@PathVariable UUID userCode){
+        passwordRequest.setUserCode(userCode);
         return ResponseEntity.ok(authenticationService.changePassword(passwordRequest));
+    }
+
+    @PostMapping("/update/user/{userCode}")
+    ApiResponse updateUser(
+            @RequestBody UserRequest userRequest,
+            @PathVariable UUID userCode
+            ){
+        return  authenticationService.updateUserDetails(userRequest,userCode);
     }
 }

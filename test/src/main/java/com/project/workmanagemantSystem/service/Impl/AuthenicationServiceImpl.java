@@ -1,11 +1,15 @@
 package com.project.workmanagemantSystem.service.Impl;
 
-import com.project.workmanagemantSystem.config.JwtService;
 import com.project.workmanagemantSystem.Responce.ApiResponse;
+import com.project.workmanagemantSystem.config.JwtService;
+import com.project.workmanagemantSystem.domain.Members;
 import com.project.workmanagemantSystem.domain.User;
+import com.project.workmanagemantSystem.domain.enumeration.Status;
 import com.project.workmanagemantSystem.domain.enumeration.UserRole;
 import com.project.workmanagemantSystem.domain.request.PasswordRequest;
+import com.project.workmanagemantSystem.domain.request.UserRequest;
 import com.project.workmanagemantSystem.exceptions.BadAlertException;
+import com.project.workmanagemantSystem.repository.MemberRepository;
 import com.project.workmanagemantSystem.repository.UserRepository;
 import com.project.workmanagemantSystem.security.AuthenticationRequest;
 import com.project.workmanagemantSystem.security.AuthenticationResponce;
@@ -32,6 +36,8 @@ public class AuthenicationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final MemberRepository memberRepository;
+//    private final MailService service;
 
     @Override
     public ApiResponse register(RegisterRequest request) {
@@ -45,7 +51,7 @@ public class AuthenicationServiceImpl implements AuthenticationService {
                     .email(request.getEmail())
                     .password(passwordEncoder.encode(request.getPassword()))
                     .Phone(request.getPhone())
-                    .status("PENDING")
+                    .status(Status.PENDING.name())
                     .role(UserRole.USER)
                     .isPasswordChanged(false)
                     .build();
@@ -62,10 +68,10 @@ public class AuthenicationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthenticationResponce authenticate(AuthenticationRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByUsersEmail(request.getEmail())
                 .orElseThrow(() -> new BadAlertException(
-                        "user not found ",
                         "Bad credentials",
+                        "USER",
                         "INVALID_CREDENTIALS"
                 ));
         if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -94,7 +100,7 @@ public class AuthenicationServiceImpl implements AuthenticationService {
     public ApiResponse getUserVerified(UUID userId) {
         User user = userRepository.getReferenceById(userId);
         if (user != null) {
-            user.setStatus("ACTIVE");
+            user.setStatus(Status.VERIFIED.name());
             userRepository.save(user);
             return ApiResponse.builder()
                     .message("User Verified")
@@ -115,7 +121,7 @@ public class AuthenicationServiceImpl implements AuthenticationService {
 
     @Override
     public ApiResponse changePassword(PasswordRequest passwordRequest) {
-        User user = userRepository.findByEmail(passwordRequest.getEmail())
+        User user = userRepository.findById(passwordRequest.getUserCode())
                 .orElseThrow(() -> new BadAlertException(
                         "User not found",
                         "User",
@@ -158,5 +164,20 @@ public class AuthenicationServiceImpl implements AuthenticationService {
                 "User",
                 "INVALID_USER_CREDENTIALS"
         );
+    }
+
+    @Override
+    public ApiResponse updateUserDetails(UserRequest userRequest,UUID userCode) {
+        User user =  userRepository.findById(userCode).orElseThrow();
+        user.setFirstName(userRequest.getFirstName());
+        user.setLastName(userRequest.getLastName());
+        user.setPhone(userRequest.getPhone());
+        userRepository.save(user);
+        Members members = memberRepository.findByEmail(user.getEmail()).get();
+        members.setFirstName(user.getFirstName());
+        members.setLastName(user.getLastName());
+        members.setPhone(user.getPhone());
+        memberRepository.save(members);
+        return ApiResponse.builder().message("User Updated").status(HttpStatus.OK).build();
     }
 }

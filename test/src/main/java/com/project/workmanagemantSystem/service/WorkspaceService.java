@@ -18,4 +18,6 @@ public interface WorkspaceService {
     WorkSpace getWorkspace(UUID workSpaceCode);
 
     ApiResponse addMemberToWorkSpace(String email, UUID workspaceCode);
+
+    List<WorkSpace> getWorkSpaceOfLoggedUser();
 }
