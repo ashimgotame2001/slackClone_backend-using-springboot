@@ -1,0 +1,7 @@
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-secret: 7be16c4ce51b71f3ad69cc381ad96cde0d405eb2
+            client-id: 4bbfa7cb257e7748e733

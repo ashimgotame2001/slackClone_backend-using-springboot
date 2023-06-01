@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -27,5 +28,7 @@ public class WorkSpace {
     private String name;
     @ManyToOne
     private Client clientCode;
+    private LocalDateTime startedAt;
+    private LocalDateTime expiredAt;
 
 }
