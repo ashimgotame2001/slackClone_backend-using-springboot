@@ -7,20 +7,23 @@ import com.project.workmanagemantSystem.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+import java.util.UUID;
+
 @RestController
-@RequestMapping("/provider")
+@RequestMapping("/client")
 @RequiredArgsConstructor
 public class ClientResource {
 
     private final ClientService clientService;
 
-    @PostMapping("/add_client")
-    ApiResponse registerClient(@RequestBody Client client){
+    @PostMapping("/register")
+    ApiResponse registerClient(@RequestBody Client client) throws MessagingException {
         return clientService.CreateNewClient(client);
     };
 
-    @GetMapping("/client/{verificationOTP}")
-    ApiResponse verifyOTP(@PathVariable String verificationOTP){
-       return   clientService.verifyClientOTP(verificationOTP);
+    @GetMapping("/verify/{clientCode}/{verificationOTP}")
+    ApiResponse verifyOTP(@PathVariable String verificationOTP, @PathVariable UUID clientCode){
+       return  clientService.verifyClientOTP(verificationOTP,clientCode);
     }
 }

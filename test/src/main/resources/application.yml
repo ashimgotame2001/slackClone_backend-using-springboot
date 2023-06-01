@@ -1,7 +1,26 @@
 spring:
+  mail:
+    host: ${SMTP_HOST}
+    port: ${SMTP_PORT}
+    username: ${SMTP_USER}
+    password: ${SMTP_PASS}
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable:true
+          auth: true
+          starttls:
+            enable: true
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    cache: false
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
     main:
       allow-bean-definition-overriding: true
   jpa:
@@ -11,9 +30,9 @@ spring:
       ddl-auto: update
       database-platform: org.hibernate.dialect.PostgreSQL10Dialect
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: admin
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}
     driverClassName: org.postgresql.Driver
 
   integration:
@@ -30,5 +49,3 @@ springfox:
   documentation:
     swagger-ui:
       enabled: true
-
-

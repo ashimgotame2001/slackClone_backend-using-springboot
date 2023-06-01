@@ -24,7 +24,6 @@ public class Client {
     private String owner;
     private String status;
     private String OTP;
-    private LocalDateTime startedAt;
-    private LocalDateTime expiredAt;
+
 
 }

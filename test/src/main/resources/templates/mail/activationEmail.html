@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OTP Verification</title>
+    <link rel="preconnect" th:href="@{https://fonts.googleapis.com}">
+    <link rel="preconnect" th:href="@{https://fonts.gstatic.com}" crossorigin>
+    <link th:href="@{https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap}" rel="stylesheet">
+    <style>
+        body {
+            background-color: gainsboro;
+            height: auto;
+            width: 600px;
+            margin: 2rem;
+            max-width: 60rem;
+            font-family: 'Poppins', sans-serif;
+            line-height: 21px;
+
+        }
+    </style>
+</head>
+<body>
+<h3 th:text="#{email.reset.greeting(${USER.getFirstName()} + '' + ${USER.getLastName()})}"></h3>
+<h3 th:text="#{OTP.verification.message(${USER.getEmail()})}"></h3>
+<h1 th:text="#{OTP.value(${USER.getOTP()})}"></h1>
+<h3 th:text="#{OTP.request.body(${USER.getEmail()})}"></h3>
+<h3 th:text="#{OTP.verify}"></h3>
+<a th:href="@{|${baseUrl}/account/activate?key=${USER.getId()}|}">
+    <button>
+        Verify OTP
+    </button>
+</a>
+<h3 th:text="#{OTP.request.end(${USER.getEmail()})}"></h3>
+<h3 th:text="#{ending}"></h3>
+<h3 th:text="#{team}"></h3>
+</body>
+</html>

@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -66,6 +67,7 @@ public class WorkspaceServiceImpl implements WorkspaceService {
                 .Channels(channelsList)
                 .members(userList)
                 .clientCode(client)
+                .startedAt(LocalDateTime.now())
                 .build();
         workspaceRepository.save(workSpace);
         return ApiResponse.builder().message("Registered").status(HttpStatus.CREATED).build();
